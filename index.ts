@@ -1,8 +1,10 @@
 import prompts from "prompts";
 import { Api, TelegramClient, utils } from "telegram";
+import {Logger} from 'telegram/extensions'
 import { StringSession } from "telegram/sessions";
 import BigInteger from "big-integer";
 import fs from "fs/promises";
+
 
 // CONFIGS:
 const sessionString = "";   // paste session id printed on console after logged in
@@ -12,7 +14,7 @@ const apiHash = "";         // in https://my.telegram.org/apps you could see dat
 const groupId = "nodejsGroup";
 
 const session = new StringSession(sessionString);
-const client = new TelegramClient(session, apiId, apiHash.trim(), {});
+const client = new TelegramClient(session, apiId, apiHash.trim(), {baseLogger:new Logger('warn')});
 (async () => {
     await client.start({
         password: () =>
@@ -50,7 +52,6 @@ const client = new TelegramClient(session, apiId, apiHash.trim(), {});
         );
 
         await appendResult(finalResult);
-        console.log(chunk.events.length);
         if (!chunk.events.length) {
             console.log("done");
             process.exit(0);
@@ -63,7 +64,7 @@ const client = new TelegramClient(session, apiId, apiHash.trim(), {});
 
 async function appendResult(finalResultArray: string[]) {
     await fs.appendFile(
-        "./output.crawl.txt",
+        `./${groupId}.crawl.txt‍`,
         finalResultArray.join("\n") + "\n"
     );
 }
